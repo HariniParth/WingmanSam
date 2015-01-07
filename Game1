@@ -1,0 +1,29 @@
+
+package game1;
+
+import java.applet.Applet;
+import java.awt.Graphics;
+import java.io.IOException;
+import javax.swing.JFrame;
+
+public class Game1 extends Applet {
+    private Graphics Graphics;
+
+
+  public Game1() throws IOException {
+    JFrame f = new JFrame();
+    f.setTitle("Scrolling Shooter");
+    f.setSize(640,480);
+    f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    f.setResizable(false);
+    GameCore gp = new GameCore();
+    f.getContentPane().add(gp);
+    f.setVisible(true);
+    gp.requestFocus();
+    gp.StartRun();
+  }
+
+  public static void main(String[] args) throws IOException {
+    new Game1();
+  }
+}
