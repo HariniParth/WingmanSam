@@ -1,0 +1,33 @@
+
+package game1;
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.util.Random;
+
+public class Island extends Base {
+
+        Image img;
+        int x, y, speed;
+        Random gen;
+
+        public Island(Image img, int x, int y, int speed, Random gen) {
+            this.img = img;
+            this.x = x;
+            this.y = y;
+            this.speed = speed;
+            this.gen = gen;
+        }
+
+        public void update () {
+            y += 1;
+            if (y > 480) {
+                y = -100;
+                x = Math.abs(gen.nextInt() % (640 - 60));
+            }
+        }
+
+        public void draw(Graphics g) {
+            g.drawImage(img, x,y, panel);
+        }
+    }
