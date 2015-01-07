@@ -1,0 +1,21 @@
+package game1;
+
+
+public class Constant {
+
+  public static final int FRAME_WIDTH = 640; 
+  public static final int FRAME_HEIGHT = 480;
+
+  public static final int ENEMY01_SPEED = 5; 
+  public static final int PLAYER_SPEED = 8; 
+
+  public static final int PBULLTE_SPEED = 20;
+  public static final int EBULLTE_SPEED = 15;
+
+  public static final int PBULLTE_HURT = 2;
+  public static final int EBULLTE_HURT = 2;
+
+  public static final int PBULLTE_NUMBER = 1; 
+  public static final int EBULLTE_NUMBER = 3; 
+  public static final int BOSS01_NUMBER = 10; 
+}
