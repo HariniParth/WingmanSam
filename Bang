@@ -1,0 +1,73 @@
+
+package game1;
+
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+
+public class Bang extends Base {
+
+  private int xpic;
+  private boolean isBang = false;
+
+  public boolean isBang() {
+    return isBang;
+  }
+
+  public void setBang(boolean isBang) {
+    this.isBang = isBang;
+  }
+
+  public int getXpic() {
+    return xpic;
+  }
+
+  public void setXpic(int xpic) {
+    this.xpic = xpic;
+  }
+
+  private Timer timer;
+
+  public Bang() {
+
+    timer = new Timer(40, new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        xpic += 66;
+        if (xpic >= 528) {
+          timer.stop();
+          isBang = true;
+        }
+      }
+    });
+    timer.start();
+    Play.playBang();
+  }
+
+  private JPanel panel;
+  private Image bang = new ImageIcon("C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/explosion1_1.png").getImage();
+  private Image bang2 = new ImageIcon("C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/explosion2_1.png").getImage();
+
+  public JPanel getPanel() {
+    return panel;
+  }
+
+  public void setPanel(JPanel panel) {
+    this.panel = panel;
+  }
+
+  public void draw(Graphics g) {
+    g.drawImage(bang, x, y, x + 40, y + 40, xpic, 0, xpic + 66, 66, panel);
+  }
+  public void draw2(Graphics g) {
+    g.drawImage(bang2, x, y, x + 40, y + 40, xpic, 0, xpic + 66, 66, panel);
+  }
+
+}
