@@ -1,0 +1,24 @@
+
+package game1;
+
+abstract public class Plane extends Base {
+
+  public int life;
+
+  public int getLife() {
+    return life;
+  }
+
+  public void setLife(int life) {
+    this.life = life;
+  }
+
+  public Plane() {
+  }
+
+  abstract void move();
+  
+
+  abstract Bullet[] shot();
+
+}
