@@ -1,0 +1,53 @@
+package game1;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import sun.audio.AudioPlayer;
+
+public class Play {
+
+  private static String file = "C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/snd_explosion1.wav";
+  private static String file1 = "C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/snd_explosion2.wav";
+  private static String file2 = "C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/snd_explosion11.wav";
+  private static String file3 = "C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/background.wav";
+  private static InputStream inputStream = null;
+
+  public static void playShot() {
+    try {
+      inputStream = new FileInputStream(new File(file));
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+    AudioPlayer.player.start(inputStream);
+  }
+
+  public static void playBang() {
+    try {
+      inputStream = new FileInputStream(new File(file1));
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+    AudioPlayer.player.start(inputStream);
+  }
+
+  public static void playBoss() {
+    try {
+      inputStream = new FileInputStream(new File(file2));
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+    AudioPlayer.player.start(inputStream);
+  }
+  
+  public static void playBack() {
+    try {
+      inputStream = new FileInputStream(new File(file3));
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+    AudioPlayer.player.start(inputStream);
+  }
+  
+}
