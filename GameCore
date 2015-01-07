@@ -1,0 +1,969 @@
+package game1;
+
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.Random;
+import java.util.Vector;
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+public class GameCore extends JPanel implements KeyListener, MouseListener {
+
+  public Player player,player2;
+  public Background bg;
+  public Island i1,i2,i3;
+  public Vector<Enemy01> enemy01s = new Vector<Enemy01>();
+  public Vector<Enemy01> enemy02s = new Vector<Enemy01>();
+  public Vector<Enemy01> enemy03s = new Vector<Enemy01>();
+  public Vector<Enemy01> enemy04s = new Vector<Enemy01>();
+  public Vector<PBullet> pbullets = new Vector<PBullet>();
+  public Vector<Enemy01> enemy = new Vector<Enemy01>();
+  public Vector<EBullet> ebullet = new Vector<EBullet>();
+  public Vector<EBullet> ebullets = new Vector<EBullet>();
+  public Vector<EBullet> ebullet2 = new Vector<EBullet>();
+  public Vector<EBullet> ebullet3 = new Vector<EBullet>();
+  public Vector<EBullet> ebullet4 = new Vector<EBullet>();
+  public Vector<Bang> bangs = new Vector<Bang>();
+  public Vector<Bang> bang = new Vector<Bang>();
+  public Boss1 boss = null;
+  public Random random = new Random();
+  public boolean isFire = false;
+  public boolean isShoot = false;
+  public String info = "";
+  public static int score;
+  public Timer timer;
+  public boolean isStop = false;
+  Image img;
+  int x, y, speed;
+
+  public GameCore() throws IOException {
+    bg = new Background();
+    player = new Player();
+    player2 = new Player();
+    try {
+    Image island1 = ImageIO.read(new File("C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/island1.png"));
+    Image island2 = ImageIO.read(new File("C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/island2.png"));
+    Image island3 = ImageIO.read(new File("C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/island3.png"));
+    i1 = new Island(island1, 100, 100, speed, random);
+    i2 = new Island(island2, 200, 400, speed, random);
+    i3 = new Island(island3, 300, 200, speed, random);
+    } catch (Exception e) {
+            System.out.print("No resources are found");
+        } 
+    player.setWidth(80);
+    player.setHeight(80);
+    player.setX(400);
+    player.setY(360); 
+    player2.setWidth(80);
+    player2.setHeight(80);
+    player2.setX(200);
+    player2.setY(360); 
+    
+    // Define Timer, let the enemies and boss  shoot automatically
+    timer = new Timer(1000, new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        EnemyShot();
+        EnemyShot2();
+        EnemyShot3();
+        EnemyShot4();
+        Boss1Shot();
+      }
+    });
+    timer.start();
+    //
+    this.addKeyListener(this);
+    this.addMouseListener(this);
+  }
+
+  @Override
+  public void paint(Graphics g) {
+    super.paint(g);
+
+    bg.draw(g); //Paint Background
+    i1.update(); //Paint Islands
+    i2.update();
+    i3.update();
+    i1.draw(g);
+    i2.draw(g);
+    i3.draw(g);
+    drawInfo(g);
+    player.draw(g); //Paint Players
+    player2.draw(g);
+
+    for (int i = 0; i < pbullets.size(); i++) { //Paint Bullets
+      if (!pbullets.elementAt(i).isUsed()) {
+        pbullets.elementAt(i).setPanel(this);
+        pbullets.elementAt(i).draw(g);
+      }
+    }
+
+    for (int i = 0; i < enemy01s.size(); i++) { //Paint Enemies
+      enemy01s.elementAt(i).setPanel(this);
+      enemy01s.elementAt(i).draw(g);
+      
+    }
+    for (int i = 0; i < enemy02s.size(); i++) {
+      enemy02s.elementAt(i).setPanel(this);
+      enemy02s.elementAt(i).draw2(g);
+    
+    }
+    
+    for (int i = 0; i < enemy03s.size(); i++) {
+      enemy03s.elementAt(i).setPanel(this);
+      enemy03s.elementAt(i).draw3(g);
+    } 
+    for (int i = 0; i < enemy04s.size(); i++) {
+      enemy04s.elementAt(i).setPanel(this);
+      enemy04s.elementAt(i).draw4(g);
+    }
+    // Paint explosion
+    for (int i = 0; i < bangs.size(); i++) {
+      bangs.elementAt(i).setPanel(this);
+      bangs.elementAt(i).draw(g);
+    }
+    for (int i = 0; i < bang.size(); i++) {
+      bang.elementAt(i).setPanel(this);
+      bang.elementAt(i).draw2(g);
+    }
+    // Paint enemies' bullet
+    for (int i = 0; i < ebullets.size(); i++) {
+      if (!ebullets.elementAt(i).isUsed()) {
+        ebullets.elementAt(i).setPanel(this);
+        ebullets.elementAt(i).draw(g);
+      }
+    }
+    for (int i = 0; i < ebullet2.size(); i++) {
+      if (!ebullet2.elementAt(i).isUsed()) {
+        ebullet2.elementAt(i).setPanel(this);
+        ebullet2.elementAt(i).draw(g);
+      }
+    }
+    for (int i = 0; i < ebullet3.size(); i++) {
+      if (!ebullet3.elementAt(i).isUsed()) {
+        ebullet3.elementAt(i).setPanel(this);
+        ebullet3.elementAt(i).draw(g);
+      }
+    }
+    for (int i = 0; i < ebullet4.size(); i++) {
+      if (!ebullet4.elementAt(i).isUsed()) {
+        ebullet4.elementAt(i).setPanel(this);
+        ebullet4.elementAt(i).draw(g);
+      }
+    }
+
+    // Paint boss
+    if (boss != null) {
+      boss.draw(g);
+    }
+    drawBossInfo(g);
+  }
+
+  public void StartRun() {
+    new Thread() {
+      public void run() {
+        int counter = 0;
+        while (true) {
+          while (true && !isStop) { // judge if pause
+      
+
+
+    
+              new java.util.Timer().schedule( 
+        new java.util.TimerTask() {
+            @Override
+            public void run() {
+                AddEnemy();
+                EnemyMove();
+                EBulletMove();
+            }
+        }, 
+        5000 
+);
+              
+
+          new java.util.Timer().schedule( 
+            new java.util.TimerTask() {
+            @Override
+            public void run() {
+                AddEnemy2();
+                EnemyMove2();
+                EBulletMove2();
+                
+                new java.util.Timer().schedule( 
+                new java.util.TimerTask() {
+            @Override
+            public void run() {
+                AddEnemy3();
+                EnemyMove3();
+                EBulletMove3();
+                new java.util.Timer().schedule( 
+        new java.util.TimerTask() {
+            @Override
+            public void run() {
+                AddEnemy4();
+                EnemyMove4();
+                EBulletMove4();
+                new java.util.Timer().schedule( 
+            new java.util.TimerTask() {
+            @Override
+            public void run() {
+
+             
+          AddEnemy();
+          EnemyMove();
+          EBulletMove();
+            }
+        }, 
+        5000 
+);
+            }
+        }, 
+        10000 
+);
+            }
+        }, 
+        15000 
+); 
+          }
+        }, 
+       20000 
+);   
+          
+
+            player.move();
+            player2.moveit();
+            // Player fire
+            if (isFire && counter % 25 == 0) {
+              Bullet[] bs = player.shot();
+              
+              for (int i = 0; i < bs.length; i++) {
+                pbullets.add((PBullet) bs[i]);
+                Play.playShot();
+              }
+              
+            }
+            if (isShoot && counter % 25 == 0){
+                Bullet[] b = player2.shot2();
+                for (int i = 0; i < b.length; i++) {
+                pbullets.add((PBullet) b[i]);
+                Play.playShot();
+              }
+            }
+            // Player's bullet move
+            PBulletMove();
+
+            // judge if the bullet shot the enemy
+            CheckShot();
+            // Remove bang
+            RemoveBang();
+            // Remove enemies' bullet
+            RemoveEBullet();
+            RemoveEBullet2();
+            RemoveEBullet3();
+            RemoveEBullet4();
+            // Enemies' bullet move
+            
+            CheckLife();
+            
+            showBoss1();
+            if (boss != null) {
+              boss.move();
+            }
+            try {
+              Thread.sleep(30);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+            repaint();
+          }
+        }
+      }
+    }.start();
+  }
+
+  @Override
+  public void keyPressed(KeyEvent e) {
+    int keycode = e.getKeyCode();
+    switch (keycode) {
+    case KeyEvent.VK_UP:
+      Player.up = true;
+      break;
+    case KeyEvent.VK_W:
+      Player.high = true;
+      break;
+    case KeyEvent.VK_LEFT:
+      Player.left = true;
+      break;
+    case KeyEvent.VK_S:
+      Player.low = true;
+      break;
+    case KeyEvent.VK_RIGHT:
+      Player.right = true;
+      break;
+    case KeyEvent.VK_D:
+      Player.rside = true;
+      break;
+    case KeyEvent.VK_DOWN:
+      Player.down = true;
+      break;
+    case KeyEvent.VK_A:
+      Player.lside = true;
+      break;
+    case KeyEvent.VK_SPACE:
+      isFire = true;
+      break;
+    case KeyEvent.VK_X:
+      isShoot = true;
+      break;
+    default:
+      break;
+    }
+  }
+
+  @Override
+  public void keyReleased(KeyEvent e) {
+
+    int keycode = e.getKeyCode();
+    switch (keycode) {
+    case KeyEvent.VK_UP:
+      Player.up = false;
+      break;
+    case KeyEvent.VK_W:
+      Player.high = false;
+      break;
+    case KeyEvent.VK_LEFT:
+      Player.left = false;
+      break;
+    case KeyEvent.VK_S:
+      Player.low = false;
+      break;
+    case KeyEvent.VK_RIGHT:
+      Player.right = false;
+      break;
+    case KeyEvent.VK_D:
+      Player.rside = false;
+      break;
+    case KeyEvent.VK_DOWN:
+      Player.down = false;
+      break;
+    case KeyEvent.VK_A:
+      Player.lside = false;
+      break;
+    case KeyEvent.VK_SPACE:
+      isFire = false;
+      break;
+    case KeyEvent.VK_X:
+      isShoot = false;
+      break;
+    default:
+      break;
+    }
+  }
+
+  
+  @Override
+  public void keyTyped(KeyEvent e) {
+
+  }
+
+  // Player bullet move 
+
+  
+  public void PBulletMove() {
+    for (int i = 0; i < pbullets.size();i++) {
+        if(i%3==0)
+            pbullets.elementAt(i).moveL();
+        else if(i%4==0)
+            pbullets.elementAt(i).moveR();
+        else pbullets.elementAt(i).move();
+      if (pbullets.elementAt(i).getY() <= 0) { // Delete if out of frame
+        pbullets.remove(i);
+      }
+    }
+  }
+  
+
+
+  // Add Enemies, no more than 5, when boss appear, no enemy
+  public void AddEnemy() {
+      if (enemy01s.size() <= 4 && boss == null && enemy.size()<=2) {
+      Enemy01 e01 = new Enemy01();
+      e01.setX(random.nextInt(Constant.FRAME_WIDTH - 100) + 50);
+      e01.setY(-30);
+      e01.setHeight(30);
+      e01.setWidth(30);
+      enemy01s.add(e01);  
+      enemy.add(e01);
+      }
+   
+  }
+     
+    
+  public void AddEnemy2() {
+    
+    if (enemy02s.size() <= 4 && boss == null && enemy.size()<=2) {
+      
+      Enemy01 e01 = new Enemy01();
+      e01.setX(670);
+      e01.setY(random.nextInt(Constant.FRAME_HEIGHT - 100) + 50);
+      e01.setHeight(30);
+      e01.setWidth(30);
+      enemy02s.add(e01);
+      enemy.add(e01);
+  }
+     
+    }
+  public void AddEnemy3() {
+    if (enemy03s.size() <= 4 && boss == null && enemy.size()<=2) {
+      
+      Enemy01 e01 = new Enemy01();
+      e01.setX(-30);
+      e01.setY(random.nextInt(Constant.FRAME_HEIGHT - 100) + 50);
+      e01.setHeight(30);
+      e01.setWidth(30);
+      enemy03s.add(e01);
+      enemy.add(e01);
+  }
+     
+    }
+  
+  public void AddEnemy4() {
+    if (enemy04s.size() <= 4 && boss == null && enemy.size()<=2) {
+      
+      Enemy01 e01 = new Enemy01();
+      e01.setX(random.nextInt(Constant.FRAME_WIDTH + 100) - 50);
+      e01.setY(510);
+      e01.setHeight(30);
+      e01.setWidth(30);
+      enemy04s.add(e01);
+      enemy.add(e01);
+  }
+    } 
+
+  // Enemy move, if crash on player, player minus 5 lives
+  public void EnemyMove() {
+      
+    for (int i = 0; i < enemy01s.size(); i++) {
+      enemy01s.elementAt(i).move();
+      
+      if (Check
+          .C3(player.x, player.y + 20, 80, 60, enemy01s.elementAt(i))) {
+        Bang b = new Bang();
+        b.setX(enemy01s.elementAt(i).getX());
+        b.setY(enemy01s.elementAt(i).getY());
+        bang.add(b);
+        score += 10;
+        player.setLife(player.getLife() - 1);
+        enemy01s.remove(i);
+        enemy.remove(i);
+      }
+      else if (Check
+          .C3(player2.x, player2.y + 20, 80, 60, enemy01s.elementAt(i))) {
+        Bang b = new Bang();
+        b.setX(enemy01s.elementAt(i).getX());
+        b.setY(enemy01s.elementAt(i).getY());
+        bang.add(b);
+        score += 10;
+        player2.setLife(player2.getLife() - 1);
+        enemy01s.remove(i);
+        enemy.remove(i);
+      }
+    }
+    for(int j = 0;j<enemy01s.size();j++){
+      if (enemy01s.elementAt(j).getY() >= Constant.FRAME_WIDTH - 30) {// ?????????
+        enemy01s.remove(j);
+        enemy.remove(j);
+      }
+    }
+  } 
+  public void EnemyMove2() {
+      
+      for (int i = 0; i < enemy02s.size(); i++) {
+      enemy02s.elementAt(i).move2();
+      
+      if (Check
+          .C3(player.x, player.y + 20, 80, 60, enemy02s.elementAt(i))) {
+        Bang b = new Bang();
+        b.setX(enemy02s.elementAt(i).getX());
+        b.setY(enemy02s.elementAt(i).getY());
+        bang.add(b);
+        score += 10;
+        player.setLife(player.getLife() - 1);
+        enemy02s.remove(i);
+        enemy.remove(i);
+      }
+      else if (Check
+          .C3(player2.x, player2.y + 20, 80, 60, enemy02s.elementAt(i))) {
+        Bang b = new Bang();
+        b.setX(enemy02s.elementAt(i).getX());
+        b.setY(enemy02s.elementAt(i).getY());
+        bang.add(b);
+        score += 10;
+        player2.setLife(player2.getLife() - 1);
+        enemy02s.remove(i);
+        enemy.remove(i);
+      }
+    }
+    for(int j = 0;j<enemy02s.size();j++){
+      if (enemy02s.elementAt(j).getX() <= -30) {
+        enemy02s.remove(j);
+        enemy.remove(j);
+      }
+    }
+  }
+  public void EnemyMove3(){
+      for (int i = 0; i < enemy03s.size(); i++) {
+      enemy03s.elementAt(i).move3();
+      if (Check
+          .C3(player.x, player.y, 80, 60, enemy03s.elementAt(i))) {
+        Bang b = new Bang();
+        b.setX(enemy03s.elementAt(i).getX());
+        b.setY(enemy03s.elementAt(i).getY());
+        bang.add(b);
+        score += 10;
+        player.setLife(player.getLife() - 1);
+        enemy03s.remove(i);
+        enemy.remove(i);
+      }
+      else if (Check
+          .C3(player2.x, player2.y, 80, 60, enemy03s.elementAt(i))) {
+        Bang b = new Bang();
+        b.setX(enemy03s.elementAt(i).getX());
+        b.setY(enemy03s.elementAt(i).getY());
+        bang.add(b);
+        score += 10;
+        player2.setLife(player2.getLife() - 1);
+        enemy03s.remove(i);
+        enemy.remove(i);
+      }
+    }
+    for(int j = 0;j<enemy03s.size();j++){
+      if (enemy03s.elementAt(j).getX() >= 670) {
+        enemy03s.remove(j);
+        enemy.remove(j);
+      }
+    }
+  }
+  public void EnemyMove4(){
+      for (int i = 0; i < enemy04s.size(); i++) {
+      enemy04s.elementAt(i).move4();
+      
+      if (Check
+          .C3(player.x, player.y, 80, 60, enemy04s.elementAt(i))) {
+        Bang b = new Bang();
+        b.setX(enemy04s.elementAt(i).getX());
+        b.setY(enemy04s.elementAt(i).getY());
+        bang.add(b);
+        score += 10;
+        player.setLife(player.getLife() - 1);
+        enemy04s.remove(i);
+        enemy.remove(i);
+      }
+      else if (Check
+          .C3(player2.x, player2.y, 80, 60, enemy04s.elementAt(i))) {
+        Bang b = new Bang();
+        b.setX(enemy04s.elementAt(i).getX());
+        b.setY(enemy04s.elementAt(i).getY());
+        bang.add(b);
+        score += 10;
+        player2.setLife(player2.getLife() - 1);
+        enemy04s.remove(i);
+        enemy.remove(i);
+      }
+    }
+    for(int j = 0;j<enemy04s.size();j++){
+      if (enemy04s.elementAt(j).getY() <= -30) {
+        enemy04s.remove(j);
+        enemy.remove(j);
+      }
+    }
+  } 
+
+  // Judge if the player's bullets shot on the enemies, minus lives if shot
+  
+  public void CheckShot() {
+    for (int i = 0; i < pbullets.size(); i++) {
+      for (int j = 0; j < enemy01s.size(); j++) {
+        if (Check.C1(pbullets.elementAt(i), enemy01s.elementAt(j))
+            && !pbullets.elementAt(i).isUsed()) {
+          enemy01s.elementAt(j).setLife(
+              enemy01s.elementAt(j).getLife()
+                  - pbullets.elementAt(i).getHurt()); 
+          pbullets.elementAt(i).setUsed(true);
+          if (enemy01s.elementAt(j).getLife() <= 0) { 
+            //
+            bangs.add(enemy01s.elementAt(j).getBang()); //Add explosion
+            enemy01s.remove(j); // Delete enemies
+            enemy.remove(j);
+            score += 10;
+          }
+        }
+      } 
+      for (int j = 0; j < enemy02s.size(); j++) {
+        if (Check.C1(pbullets.elementAt(i), enemy02s.elementAt(j))
+            && !pbullets.elementAt(i).isUsed()) {
+          enemy02s.elementAt(j).setLife(
+              enemy02s.elementAt(j).getLife()
+                  - pbullets.elementAt(i).getHurt()); // Minus Lives
+          pbullets.elementAt(i).setUsed(true);
+          if (enemy02s.elementAt(j).getLife() <= 0) { // if no lives, delete
+            //
+            bangs.add(enemy02s.elementAt(j).getBang()); //Add explosion
+            enemy02s.remove(j); // Delete enemies
+            enemy.remove(j);
+            score += 10;
+          }
+        }
+      }
+      for (int j = 0; j < enemy03s.size(); j++) {
+        if (Check.C1(pbullets.elementAt(i), enemy03s.elementAt(j))
+            && !pbullets.elementAt(i).isUsed()) {
+          enemy03s.elementAt(j).setLife(
+              enemy03s.elementAt(j).getLife()
+                  - pbullets.elementAt(i).getHurt()); // Minus Lives
+          pbullets.elementAt(i).setUsed(true);
+          if (enemy03s.elementAt(j).getLife() <= 0) { // if no lives, delete
+            //
+            bangs.add(enemy03s.elementAt(j).getBang()); //Add explosion
+            enemy03s.remove(j); // Delete enemies
+            enemy.remove(j);
+            score += 10;
+          }
+        }
+      }
+      for (int j = 0; j < enemy04s.size(); j++) {
+        if (Check.C1(pbullets.elementAt(i), enemy04s.elementAt(j))
+            && !pbullets.elementAt(i).isUsed()) {
+          enemy04s.elementAt(j).setLife(
+              enemy04s.elementAt(j).getLife()
+                  - pbullets.elementAt(i).getHurt()); // Minus Lives
+          pbullets.elementAt(i).setUsed(true);
+          if (enemy04s.elementAt(j).getLife() <= 0) { // if no lives, delete
+            //
+            bangs.add(enemy04s.elementAt(j).getBang()); //Add explosion
+            enemy04s.remove(j); // Delete enemies
+            enemy.remove(j);
+            score += 10;
+          }
+        }
+      } 
+      // if the boss appear, judge if the player shot on the boss
+      if (boss != null) {
+        if (Check.Testing(pbullets.elementAt(i), boss)
+            && !pbullets.elementAt(i).isUsed()) {
+          boss.setLife(boss.getLife()
+              - pbullets.elementAt(i).getHurt());
+          pbullets.elementAt(i).setUsed(true);
+          if (boss.getLife() <= 0) {
+            boss.setLife(0);
+
+            int result = JOptionPane.showConfirmDialog(this,
+                "You Win! Try Again?", "Attention", JOptionPane.YES_OPTION);
+            if (result == 0) {
+              reset();
+            } else {
+              System.exit(0);
+            }
+          }
+        }
+      }
+
+    }
+  }
+
+  // Delete Explosion
+  public void RemoveBang() {
+    for (int i = 0; i < bangs.size(); i++) {
+      if (bangs.elementAt(i).isBang()) { // Delete after explosion
+        bangs.remove(i);
+      }
+      for (int j = 0; j < bang.size(); j++) {
+      if (bang.elementAt(j).isBang()) { // Delete after explosion
+        bang.remove(j);
+      }
+    }
+  }}
+
+  // Paint the information of players
+  public void drawInfo(Graphics g) {
+    g.setColor(Color.green);
+    g.fillRect(150, 20, player.getLife(), 10);
+    g.fillRect(150, 40, player2.getLife(), 10);
+    g.drawString(String.format("%d", player.getLife()), 250, 30);
+    g.drawString(String.format("%d", player2.getLife()), 250, 50);
+    info = "Score" + score + "";
+    g.drawString(info, 20, 30);
+  }
+  
+
+
+  // Paint the information of boss
+  public void drawBossInfo(Graphics g) {
+    if (boss != null) {
+      g.setColor(Color.red);
+      g.fillRect(Constant.FRAME_WIDTH - 30, 30, 10, boss.getLife());
+      g.drawString(String.format("%d", boss.getLife()),
+          Constant.FRAME_WIDTH - 40, 20);
+    }
+
+  }
+
+  // Enemy shoot
+  public void EnemyShot() {
+      
+    for (int i = 0; i < enemy01s.size(); i++) {
+     
+      EBullet[] es = (EBullet[]) enemy01s.elementAt(i).shot();
+      for (int j = 0; j < es.length; j++) {
+        ebullets.add(es[j]);
+          
+        
+      }
+    }
+  }
+  
+  public void EnemyShot2() {
+      
+    for (int i = 0; i < enemy02s.size(); i++) {
+        
+      EBullet[] es = (EBullet[]) enemy02s.elementAt(i).shot();
+      for (int j = 0; j < es.length; j++) {
+        ebullet2.add(es[j]);
+      }
+    }
+  }
+  
+  public void EnemyShot3() {
+    for (int i = 0; i < enemy03s.size(); i++) {
+      EBullet[] es = (EBullet[]) enemy03s.elementAt(i).shot();
+      for (int j = 0; j < es.length; j++) {
+        ebullet3.add(es[j]);
+      }
+    }
+  }
+public void EnemyShot4() {
+    for (int i = 0; i < enemy04s.size(); i++) {
+      EBullet[] es = (EBullet[]) enemy04s.elementAt(i).shot();
+      for (int j = 0; j < es.length; j++) {
+        ebullet4.add(es[j]);
+      }
+    }
+  } 
+  // Remove the bullet out of frame
+  public void RemoveEBullet() {
+    for (int i = 0; i < ebullets.size(); i++) {
+      if (ebullets.elementAt(i).getY() > 480
+          || ebullets.elementAt(i).isUsed) {
+        ebullets.remove(i);
+      }
+    }
+  }
+  public void RemoveEBullet2() {
+    for (int i = 0; i < ebullet2.size(); i++) {
+      if (ebullet2.elementAt(i).getX() < 0
+          || ebullet2.elementAt(i).isUsed) {
+        ebullet2.remove(i);
+      }
+    }
+  }
+  public void RemoveEBullet3() {
+    for (int i = 0; i < ebullet3.size(); i++) {
+      if (ebullet3.elementAt(i).getX() > 640
+          || ebullet3.elementAt(i).isUsed) {
+        ebullet3.remove(i);
+      }
+    }
+  }
+  public void RemoveEBullet4() {
+    for (int i = 0; i < ebullet4.size(); i++) {
+      if (ebullet4.elementAt(i).getY() < 0
+          || ebullet4.elementAt(i).isUsed) {
+        ebullet4.remove(i);
+      }
+    }
+  }
+
+  // Enemies' bullets move
+  public void EBulletMove() {
+    for (int i = 0; i < ebullets.size(); i++) {
+      ebullets.elementAt(i).move();
+      if (Check.C1(ebullets.elementAt(i), player)
+          && (!ebullets.elementAt(i).isUsed())) {
+        player.setLife(player.getLife()
+            - ebullets.elementAt(i).getHurt());
+        ebullets.elementAt(i).setUsed(true);
+      }
+      else if (Check.C1(ebullets.elementAt(i), player2)
+          && (!ebullets.elementAt(i).isUsed())) {
+        player2.setLife(player2.getLife()
+            - ebullets.elementAt(i).getHurt());
+        ebullets.elementAt(i).setUsed(true);
+      }
+
+    }
+  } 
+    public void EBulletMove2() {
+    for (int i = 0; i < ebullet2.size(); i++) {
+      ebullet2.elementAt(i).moveL();
+      if (Check.C1(ebullet2.elementAt(i), player)
+          && (!ebullet2.elementAt(i).isUsed())) {
+        player.setLife(player.getLife()
+            - ebullet2.elementAt(i).getHurt());
+        ebullet2.elementAt(i).setUsed(true);
+      }
+      else if (Check.C1(ebullet2.elementAt(i), player2)
+          && (!ebullet2.elementAt(i).isUsed())) {
+        player2.setLife(player2.getLife()
+            - ebullet2.elementAt(i).getHurt());
+        ebullet2.elementAt(i).setUsed(true);
+      }
+
+    }
+  }
+      public void EBulletMove3() {
+    for (int i = 0; i < ebullet3.size(); i++) {
+      ebullet3.elementAt(i).moveR();
+      if (Check.C1(ebullet3.elementAt(i), player)
+          && (!ebullet3.elementAt(i).isUsed())) {
+        player.setLife(player.getLife()
+            - ebullet3.elementAt(i).getHurt());
+        ebullet3.elementAt(i).setUsed(true);
+      }
+      else if (Check.C1(ebullet3.elementAt(i), player2)
+          && (!ebullet3.elementAt(i).isUsed())) {
+        player2.setLife(player2.getLife()
+            - ebullet3.elementAt(i).getHurt());
+        ebullet3.elementAt(i).setUsed(true);
+      }
+
+    }
+  }
+        public void EBulletMove4() {
+    for (int i = 0; i < ebullet4.size(); i++) {
+      ebullet4.elementAt(i).moveU();
+      if (Check.C1(ebullet4.elementAt(i), player)
+          && (!ebullet4.elementAt(i).isUsed())) {
+        player.setLife(player.getLife()
+            - ebullet4.elementAt(i).getHurt());
+        ebullet4.elementAt(i).setUsed(true);
+      }
+      else if (Check.C1(ebullet4.elementAt(i), player2)
+          && (!ebullet4.elementAt(i).isUsed())) {
+        player2.setLife(player2.getLife()
+            - ebullet4.elementAt(i).getHurt());
+        ebullet4.elementAt(i).setUsed(true);
+      }
+
+    }
+  }
+
+
+  // Show the information of boss
+  public void showBoss1() {
+
+    if (score >= 1000 && boss == null) {
+      boss = new Boss1();
+      boss.setX(200);
+      boss.setY(20);
+      boss.setWidth(100);
+      boss.setHeight(100);
+    }
+  }
+  
+    public void CheckLife() {
+    if (player.getLife() <= 0 || player2.getLife() <= 0 ) {
+        int result = JOptionPane.showConfirmDialog(this, "You lose! Try Again?", "Attention",
+          JOptionPane.YES_OPTION);
+      if (result == 0) {
+        reset();
+
+      } else {
+        System.exit(0);
+      }
+    }
+  }
+
+  // Boss shot
+  public void Boss1Shot() {
+    if (boss != null) {
+      EBullet[] bs = (EBullet[]) boss.shot();
+      for (int i = 0; i < bs.length; i++) {
+        ebullets.add(bs[i]);
+      }
+    }
+  }
+
+  // Reset Game
+  public void reset() {
+    ebullets.clear();
+    ebullet2.clear();
+    ebullet3.clear();
+    ebullet4.clear();
+    pbullets.clear();
+    enemy.clear();
+    enemy01s.clear();
+    enemy02s.clear();
+    enemy03s.clear();
+    enemy04s.clear();
+    player.setX(400);
+    player.setY(360);
+    player.setLife(100);
+    player2.setX(200);
+    player2.setY(360);
+    player2.setLife(100);
+    score = 0;
+    Player.up = false;
+    Player.down = false;
+    Player.left = false;
+    Player.right = false;
+    Player.high = false;
+    Player.low = false;
+    Player.lside = false;
+    Player.rside = false;
+    isFire = false;
+    boss = null;
+  }
+
+  @Override
+  public void mouseClicked(MouseEvent e) {
+  }
+
+  @Override
+  public void mouseEntered(MouseEvent e) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void mouseExited(MouseEvent e) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void mousePressed(MouseEvent e) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void mouseReleased(MouseEvent e) {
+    // TODO Auto-generated method stub
+
+  }
+  
+}
