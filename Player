@@ -1,0 +1,119 @@
+package game1;
+
+import java.awt.Graphics;
+import java.awt.Image;
+import javax.swing.ImageIcon;
+
+public class Player extends Plane {
+
+  Player player1,player2;
+  public static boolean up, down, left, right,high,low,lside,rside; // The player's direction
+  int speed=1;
+  Graphics g;
+  Image img;
+  
+  public void setLife(int life) {
+    if (life <= 0)
+      life = 0;
+    if (life >= 100)
+      life = 100;
+    this.life = life;
+  }
+  
+  public Player() {
+    this.img = new ImageIcon("C:/Resources/myplane_1.png").getImage();
+    life = 100;
+  }
+
+  @Override
+    public void draw(Graphics g) {
+        g.drawImage(img, x, y, panel);}
+    
+    public void moveit(){
+        
+        if (Player.high) {
+      if (y - Constant.PLAYER_SPEED >= 0) {
+        y -= Constant.PLAYER_SPEED;
+      }
+    }
+    if (Player.low) {
+      if (y + Constant.PLAYER_SPEED <= Constant.FRAME_HEIGHT - 100) {
+        y += Constant.PLAYER_SPEED;
+      }
+    }
+    if (Player.rside) {
+      if (x + Constant.PLAYER_SPEED <= Constant.FRAME_WIDTH - 80)
+        x += Constant.PLAYER_SPEED;
+    }
+    if (Player.lside) {
+      if (x - Constant.PLAYER_SPEED >= 0)
+        x -= Constant.PLAYER_SPEED;
+    }
+    }
+  @Override
+  public void move() {
+    if (Player.up) {
+      if (y - Constant.PLAYER_SPEED >= 0) {
+        y -= Constant.PLAYER_SPEED;
+      }
+    }
+    if (Player.down) {
+      if (y + Constant.PLAYER_SPEED <= Constant.FRAME_HEIGHT - 100) {
+        y += Constant.PLAYER_SPEED;
+      }
+    }
+    if (Player.right) {
+      if (x + Constant.PLAYER_SPEED <= Constant.FRAME_WIDTH - 80)
+        x += Constant.PLAYER_SPEED;
+    }
+    if (Player.left) {
+      if (x - Constant.PLAYER_SPEED >= 0)
+        x -= Constant.PLAYER_SPEED;
+    }
+  }
+
+
+  @Override
+  public Bullet[] shot() {
+
+    Bullet bullet[] = new PBullet[Constant.PBULLTE_NUMBER];
+    for (int i = 0; i < Constant.PBULLTE_NUMBER; i++) {
+      bullet[i] = new PBullet();
+      bullet[i].setX(x
+          + this.width
+          / (Constant.PBULLTE_NUMBER == 1 ? 2
+              : Constant.PBULLTE_NUMBER - 1) * i-4);
+      if(Constant.PBULLTE_NUMBER==1){
+        bullet[i].setX(x
+          + this.width/2-4);
+      }
+      bullet[i].setY(y);
+      bullet[i].setWidth(8);
+      bullet[i].setHeight(15);
+      bullet[i].setHurt(Constant.PBULLTE_HURT);
+    }
+    return bullet;
+  }
+
+ public Bullet[] shot2() {
+
+    Bullet bullet[] = new PBullet[Constant.PBULLTE_NUMBER];
+    for (int i = 0; i < Constant.PBULLTE_NUMBER; i++) {
+      bullet[i] = new PBullet();
+      bullet[i].setX(x
+          + this.width
+          / (Constant.PBULLTE_NUMBER == 1 ? 2
+              : Constant.PBULLTE_NUMBER - 1) * i-4);
+      if(Constant.PBULLTE_NUMBER==1){
+        bullet[i].setX(x
+          + this.width/2-4);
+      }
+      bullet[i].setY(y);
+      bullet[i].setWidth(8);
+      bullet[i].setHeight(15);
+      bullet[i].setHurt(Constant.PBULLTE_HURT);
+    }
+    return bullet;
+  }
+
+}
