@@ -1,0 +1,46 @@
+package game1;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.io.File;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
+/**
+ *
+ * @author Harini
+ */
+public class Background extends Base {
+
+    public Background() {
+    this.img = new ImageIcon("C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/water.png").getImage();
+    Play.playBack();
+  }
+
+    int speed = 1, move = 0;
+    Image water,lose;
+    int w = 640, h = 480;
+    @Override
+    public void draw(Graphics g) {
+        try {
+        water = ImageIO.read(new File("C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/water.png"));
+        }catch (Exception e) {
+            System.out.print("No resources are found");
+        }
+    //    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    int TileWidth = water.getWidth(panel);
+        int TileHeight = water.getHeight(panel);
+
+        int NumberX = (int) (w / TileWidth);
+        int NumberY = (int) (h / TileHeight);
+
+        for (int i = -1; i <=30; i++) {
+            for (int j = 0; j <= NumberX; j++) {
+                g.drawImage(water, j * TileWidth, 
+                        i * TileHeight + (move % TileHeight), TileWidth, 
+                        TileHeight, panel);
+            }
+        }
+        move += speed;
+        
+    }
+}
