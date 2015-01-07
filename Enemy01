@@ -1,0 +1,117 @@
+
+package game1;
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.io.File;
+import java.util.Random;
+import javax.imageio.ImageIO;
+
+public class Enemy01 extends Plane {
+
+    Random gen = new Random();
+    int speed =1;
+    Image e1,e2,e3,e4;
+    Enemy01 enemy1,enemy2,enemy3,enemy4;
+    Graphics g;
+    
+  public Enemy01()  {
+
+    life = 1;
+    
+    
+  }
+ public Enemy01(Image img, int x, int y, int speed, Random gen) {
+            this.img = img;
+            this.x = x;
+            this.y = y;
+            this.speed = speed;
+            this.gen = gen;
+       }
+  @Override
+  public void move() {
+    this.y = this.y + Constant.ENEMY01_SPEED;
+  }
+
+  public void move2() {
+    this.x = this.x - Constant.ENEMY01_SPEED;
+  }
+  
+  public void move3() {
+    this.x = this.x + Constant.ENEMY01_SPEED;
+  }
+  
+  public void move4() {
+    this.y = this.y - Constant.ENEMY01_SPEED;
+  }
+  
+  @Override
+  public void draw(Graphics g) {
+      try {
+        e1 = ImageIO.read(new File("C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/enemy1_1.png"));
+        enemy1 = new Enemy01(e1, 100,480, 1, gen);
+    } catch (Exception e) {}
+      
+    g.drawImage(e1, x, y, panel);
+  }
+  
+  public void draw2(Graphics g) {
+      try {
+        e2 = ImageIO.read(new File("C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/enemy3_1.png"));
+        enemy2 = new Enemy01(e2, 200,400, 1, gen);
+    } catch (Exception e) {}
+      
+    g.drawImage(e2, x, y, panel);
+  }
+  
+  public void draw3(Graphics g) {
+      try {
+        e3 = ImageIO.read(new File("C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/enemy2_1.png"));
+        enemy3 = new Enemy01(e3, 250, 250, 1, gen);
+    } catch (Exception e) {}
+      
+    g.drawImage(e3, x, y, panel);
+  }
+  
+  public void draw4(Graphics g) {
+      try {
+        e4 = ImageIO.read(new File("C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/enemy4_1.png"));
+        enemy4 = new Enemy01(e4, 150, 300, 1, gen);
+    } catch (Exception e) {}
+      
+    g.drawImage(e4, x, y, panel);
+  }
+  
+
+  @Override
+  public Bullet[] shot() {
+    Bullet bullet[] = new EBullet[Constant.EBULLTE_NUMBER];
+    for (int i = 0; i < Constant.EBULLTE_NUMBER; i++) {
+      bullet[i] = new EBullet();
+      bullet[i].setX(x
+          + this.width
+          / (Constant.EBULLTE_NUMBER == 1 ? 2
+              : Constant.EBULLTE_NUMBER - 1) * i);
+      if(Constant.EBULLTE_NUMBER==1){
+        bullet[i].setX(x
+          + this.width/2-2);
+      }
+      bullet[i].setY(y+height);
+      bullet[i].setWidth(5);
+      bullet[i].setHeight(10);
+      bullet[i].setHurt(Constant.EBULLTE_HURT);
+    }
+    return bullet;
+  }
+
+
+  
+  public Bang getBang() {
+    Bang bang = new Bang();
+    bang.setX(x);
+    bang.setY(y);
+    bang.setWidth(width);
+    bang.setHeight(height);
+    return bang;
+  }
+}
