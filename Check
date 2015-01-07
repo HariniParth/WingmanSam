@@ -1,0 +1,39 @@
+package game1;
+
+import java.awt.Rectangle;
+
+
+public class Check {
+
+  public static boolean AC(PBullet ball, Enemy01 enemy) {
+    return CheckPoint(ball.getX(), ball.getY(), enemy);
+  }
+
+  public static boolean CheckPoint(int x, int y, Enemy01 enemy) {
+    return x > enemy.getX() && x < enemy.getX() + enemy.getWidth()
+        && y > enemy.getY() && y < enemy.getY() + enemy.getHeight();
+  }
+
+  /** Judge bullet and plane */
+  public static boolean C1(Bullet ball, Plane enemy) {
+    Rectangle a = new Rectangle(ball.getX(), ball.getY(), ball.getWidth(),
+        ball.getHeight());
+    Rectangle b = new Rectangle(enemy.getX(), enemy.getY(), enemy
+        .getWidth(), enemy.getHeight());
+    return a.intersects(b);
+  }
+
+  // Compare the two elements
+  public static boolean Testing(Base ball, Base enemy) {
+    Rectangle a = new Rectangle(ball.getX(), ball.getY(), ball.getWidth(),
+        ball.getHeight());
+    Rectangle b = new Rectangle(enemy.getX(), enemy.getY(), enemy
+        .getWidth(), enemy.getHeight());
+    return a.intersects(b);
+  }
+
+  public static boolean C3(int x, int y, int w, int h, Enemy01 enemy) {
+    return C1(new PBullet(x, y, w, h), enemy);
+  }
+
+}
