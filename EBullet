@@ -1,0 +1,34 @@
+package game1;
+import java.awt.Graphics;
+
+import javax.swing.ImageIcon;
+
+
+public class EBullet extends Bullet {
+
+  public EBullet() {
+    this.img = new ImageIcon("C:/Users/Harini/Documents/NetBeansProjects/Game1/src/Resources/bullet.png").getImage();
+  }
+  @Override
+  public void move() {
+    this.y = this.y + Constant.EBULLTE_SPEED;
+
+  }
+  @Override
+  public void draw(Graphics g) {
+    g.drawImage(img, x, y, width, height, panel);
+  }
+
+    @Override
+  public void moveL() {
+        this.x = this.x - Constant.EBULLTE_SPEED;
+  }
+
+    @Override
+   public void moveR() {
+        this.x = this.x + Constant.EBULLTE_SPEED;
+    }
+   public void moveU() {
+        this.y = this.y - Constant.EBULLTE_SPEED;
+    }
+}
