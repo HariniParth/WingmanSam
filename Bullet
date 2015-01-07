@@ -1,0 +1,33 @@
+
+package game1;
+
+
+public abstract class Bullet extends Base {
+
+  public int speed;
+  public int hurt;
+  public boolean isUsed = false;
+  public boolean isUsed() {
+    return isUsed;
+  }
+  public void setUsed(boolean isUsed) {
+    this.isUsed = isUsed;
+  }
+  public Bullet() {
+  }
+  public int getSpeed() {
+    return speed;
+  }
+  public void setSpeed(int speed) {
+    this.speed = speed;
+  }
+  public int getHurt() {
+    return hurt;
+  }
+  public void setHurt(int hurt) {
+    this.hurt = hurt;
+  }
+  abstract void move();
+  abstract void moveL();
+  abstract void moveR();
+}
